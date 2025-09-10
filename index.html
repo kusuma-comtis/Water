@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Galaxy Weather App</title>
+  <style>
+    /* ======= Galaxy Theme ======= */
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at 20% 30%, #1a0033, #000010 70%),
+                  url("https://www.transparenttextures.com/patterns/stardust.png");
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 20px;
+    }
+    h1 {
+      margin-top: 20px;
+      font-size: 28px;
+      text-shadow: 0 0 15px #8a2be2;
+    }
+    .card {
+      background: rgba(20,20,35,0.9);
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.6);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      margin-top: 20px;
+    }
+    input {
+      width: 70%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      background: #8a2be2;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 12px #8a2be2;
+    }
+    .weather {
+      margin-top: 20px;
+    }
+    .weather img {
+      width: 80px;
+      height: 80px;
+    }
+    .temp {
+      font-size: 32px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    .desc {
+      font-size: 18px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌌 Galaxy Weather</h1>
+  <div class="card">
+    <input id="cityInput" type="text" placeholder="Masukkan nama kota..."/>
+    <button onclick="getWeather()">Cari</button>
+    <div id="result" class="weather"></div>
+  </div>
+
+  <script>
+    const API_KEY = "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"; // <-- Ganti dengan API Key OpenWeather
+
+    async function getWeather() {
+      const city = document.getElementById("cityInput").value.trim();
+      if (!city) {
+        alert("Masukkan nama kota!");
+        return;
+      }
+
+      try {
+        const res = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric&lang=id`
+        );
+        const data = await res.json();
+
+        if (data.cod !== 200) {
+          document.getElementById("result").innerHTML =
+            `<p>⚠️ Kota tidak ditemukan!</p>`;
+          return;
+        }
+
+        const icon = data.weather[0].icon;
+        const temp = Math.round(data.main.temp);
+        const desc = data.weather[0].description;
+        const name = data.name;
+
+        document.getElementById("result").innerHTML = `
+          <h2>${name}</h2>
+          <img src="https://openweathermap.org/img/wn/${icon}@2x.png" alt="${desc}">
+          <div class="temp">${temp}°C</div>
+          <div class="desc">${desc}</div>
+        `;
+      } catch (err) {
+        document.getElementById("result").innerHTML =
+          `<p>❌ Gagal mengambil data cuaca.</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
